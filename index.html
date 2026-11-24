@@ -224,7 +224,7 @@ const REPORTS = [
    sev:{Critical:1, High:0, Medium:0, Low:0, Info:1},
    tools:["Kali Linux","Nmap 7.99","searchsploit","Netcat","Metasploit 6.5"],
    summary:"A single-day engagement against the FTP service on Metasploitable 2. Nmap identified vsftpd 2.3.4, a build that was tampered with before release. After reading the public exploit to understand the trigger, I fired the backdoor by hand with an FTP login ending in :) and connected to the hidden shell on port 6200 with Netcat, getting an unauthenticated root shell. I then reproduced the result in Metasploit and wrote it up with CVSS scoring, reproduction steps, impact, remediation and retest notes.",
-   pdf:"reports/Metasploitable2-Port21-FTP-Report.pdf", writeup:""},
+   pdf:"reports/Metasploitable 2 - Penetration Test Report (Port 21 FTP).pdf", writeup:""},
   {title:"Metasploitable 2: remaining services (Telnet, SMB, web)",
    status:"plan", statusText:"Next engagement", phase:-1,
    target:"Metasploitable 2", scope:"192.168.56.102 · 22 further ports", type:"Grey box, internal",
