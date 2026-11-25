@@ -1,384 +1,724 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-AU">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kian Harrison Security</title>
+<title>Kian Harrison · Security</title>
+<meta name="description" content="Kian Harrison, aspiring penetration tester in Melbourne. Home lab, client-style penetration test reports, and certifications.">
+<meta name="theme-color" content="#14100f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314100f'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='monospace' font-size='16' font-weight='700' fill='%23e08a6d'%3EKH%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Social sharing. Once the site is live, change og:image to the full URL (e.g. https://yourdomain/og-image.png); LinkedIn ignores relative paths. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kian Harrison · Aspiring penetration tester">
+<meta property="og:description" content="Home lab, client-style penetration test reports and certifications. Melbourne, AU.">
+<meta property="og:image" content="og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kian Harrison, aspiring penetration tester. Home lab and client-style pentest reports.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* VOICE work: a junior pentester's engagement file, written for hiring managers
-   IDEA a penetration test report: scope, lab topology, findings, evidence, sign-off
-   PICTURE the homelab network topology drawn large, a packet travelling attacker to target
-   COLOUR stone ground, black ink, brick for status and severity, white panels; night #171513
-   TYPE Schibsted Grotesk 800 for titles + Schibsted Grotesk text, mono only for IPs and tools
-   LAYOUT name and links across the top, topology full width under it; phone stacks title, diagram, links */
-:root{color-scheme:light dark;--bg:light-dark(#e7e4df,#171513);--ink:light-dark(#121110,#ece8e2);--mute:light-dark(#5b5650,#a59e95);--panel:light-dark(#ffffff,#211e1b);--line:light-dark(#cdc8c0,#3a3531);--brick:light-dark(#c8371e,#ec5a3e);--net:#131110;--netink:#ece8e2}
-:root[data-theme=light]{color-scheme:light}
-:root[data-theme=dark]{color-scheme:dark}
-*{box-sizing:border-box;min-width:0}
-html{scroll-behavior:smooth;scroll-padding-top:72px}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Schibsted Grotesk",system-ui,sans-serif;overflow-x:clip}
-a{color:inherit}
-img{max-width:100%}
-.wrap{max-width:1240px;margin:0 auto}
-.band{padding-block:clamp(28px,4vw,64px);padding-left:max(5vw,16px);padding-right:max(5vw,16px)}
-.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:14px}
-nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-nav .wrap{display:flex;align-items:center;gap:20px;padding:12px max(5vw,16px);flex-wrap:wrap}
-nav .me{font-weight:800;text-decoration:none;margin-right:auto}
-nav .links{display:flex;gap:18px;overflow-x:auto;flex-wrap:nowrap}
-nav .links a{text-decoration:none;color:var(--mute);font-weight:500;white-space:nowrap;padding:6px 0}
-nav .links a:hover,nav .links a:focus-visible{color:var(--ink)}
-h1,h2,h3{line-height:1.05;letter-spacing:-.02em;text-wrap:balance;margin:0}
-h1{font-size:clamp(40px,6vw,72px);font-weight:800}
-h2{font-size:clamp(30px,3.6vw,44px);font-weight:800;margin-bottom:10px}
-h3{font-size:20px;font-weight:700}
-.lede{font-size:clamp(17px,1.6vw,20px);max-width:60ch;margin:14px 0 0;color:var(--mute)}
-.lede b{color:var(--ink);font-weight:600}
-.head{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:32px;align-items:end}
-.btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
-.btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:1.5px solid var(--ink);border-radius:6px;text-decoration:none;font-weight:600;background:transparent;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
-.btn.solid{background:var(--ink);color:var(--bg)}
-.btn:hover{border-color:var(--brick)}
-.btn:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid var(--brick);outline-offset:2px}
-.btn svg{width:18px;height:18px;fill:currentColor}
-.btn.off{opacity:.45;pointer-events:none;border-style:dashed}
-.topo{background:var(--net);color:var(--netink);margin-top:32px;border-radius:10px;overflow:hidden}
-.topo .cap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid #2c2825;font-size:14px;color:#b5ada3}
-.topo .cap b{color:var(--netink)}
-.fig{position:relative;min-height:340px}
-.fig>svg{position:absolute;inset:0;width:100%;height:100%}
-.fig text{font-family:"Schibsted Grotesk",sans-serif}
-.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:end;margin-bottom:28px}
-.sec-head p{margin:0;color:var(--mute);max-width:56ch}
-.chip{display:inline-block;padding:2px 10px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap;border:1.5px solid currentColor}
-.chip.done{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.chip.prog{color:var(--brick)}
-.chip.plan{color:var(--mute);border-style:dashed}
-.reports{display:grid;gap:20px}
-.report{background:var(--panel);border:1px solid var(--line);border-radius:10px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);overflow:hidden}
-.report .main{padding:24px}
-.report .meta{padding:24px;border-left:1px solid var(--line);display:grid;gap:14px;align-content:start;background:color-mix(in srgb,var(--panel) 85%,var(--bg))}
-.report .top{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
-.report p{margin:10px 0 0}
-.kv{display:grid;grid-template-columns:7em minmax(0,1fr);gap:4px 12px;font-size:15px}
-.kv dt{color:var(--mute)}
-.sev{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--line);border-radius:8px;overflow:hidden;text-align:center}
-.sev div{padding:8px 2px;border-right:1px solid var(--line)}
-.sev div:last-child{border-right:0}
-.sev b{display:block;font-size:22px;line-height:1.1}
-.sev span{font-size:13px;color:var(--mute)}
-.sev .crit{background:var(--brick);color:#fff}
-.sev .crit span{color:#ffe3dc}
-.learnt{color:var(--mute);font-size:14px;margin-top:4px;max-width:60ch}
-.sk{display:grid;gap:6px}
-.sk h4{margin:0;font-size:15px;font-weight:600}
-.kv dd{margin:0}
+/* Direction: "A pentester's field notebook: calm, methodical, evidence first."
+   Type: Newsreader (display serif) + IBM Plex (Sans for text, Mono for data; one superfamily).
+   Colour: warm near-black neutrals, one terracotta accent kept for actions and the thing to look at. */
+:root{
+  --bg:#14100f; --bg-2:#191312; --surface:#1e1716; --surface-2:#251d1b;
+  --line:#2c2321; --line-2:#3d302c;
+  --text:#f0e6dc; --text-2:#c9bbaf; --mute:#9a8b80;
+  --accent:#e08a6d; --accent-2:#f2b29a; --accent-dim:rgba(224,138,109,.12); --accent-line:rgba(224,138,109,.35);
+  --on-accent:#1a0f0b; --bg-term:#0f0b0a;
+  --crit:#e5584a; --ok:#9cbf8a;
+  /* diagram tokens (read by the topology script) */
+  --wire:#6b5a54; --wire-off:#54443f; --node-stroke:#a89890; --screen:#2a211f; --screen-atk:#2e1d17; --node-sel:#2a1a15;
+  /* spacing scale */
+  --s1:4px; --s2:8px; --s3:16px; --s4:24px; --s5:40px; --s6:64px; --s7:96px;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --wrap:1120px; --gutter:clamp(20px,4vw,40px);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.65 var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,svg{display:block;max-width:100%}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:var(--accent-2)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+::selection{background:var(--accent);color:var(--on-accent)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;background:var(--accent);color:var(--on-accent);padding:8px 14px;border-radius:6px;z-index:100;font-weight:500}
+.skip:focus{top:12px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gutter)}
+.mono{font-family:var(--mono)}
+main:focus{outline:none}
+
+/* ---------- header ---------- */
+.top{position:sticky;top:0;z-index:20;background:rgba(20,16,15,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color .2s}
+.top.scrolled{border-bottom-color:var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.brand{font-family:var(--mono);font-size:14px;color:var(--text);text-decoration:none;white-space:nowrap}
+.brand span{color:var(--mute)}
+.nav{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.nav a{display:flex;align-items:center;min-height:44px;padding:0 10px;font-family:var(--mono);font-size:13px;color:var(--mute);text-decoration:none;border-radius:6px;transition:color .15s,background .15s}
+.nav a i{font-style:normal;color:var(--line-2);margin-right:6px;transition:color .15s}
+.nav a:hover{color:var(--text)}
+.nav a[aria-current="true"]{color:var(--text)}
+.nav a[aria-current="true"] i{color:var(--accent)}
+@media (max-width:720px){.nav a i{display:none}.nav a{padding:0 7px;font-size:13px}.brand span{display:none}}
+@media (max-width:420px){.brand{display:none}.top .wrap{justify-content:center}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding:clamp(40px,10vw,96px) 0 clamp(40px,8vw,96px);border-bottom:1px solid var(--line);overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:24px 24px;mask-image:linear-gradient(180deg,rgba(0,0,0,.7),transparent 85%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.7),transparent 85%);pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(40px,6vw,64px);align-items:center}
+.path{font-family:var(--mono);font-size:13px;color:var(--mute);margin:0 0 var(--s4)}
+.path b{color:var(--accent);font-weight:500}
+h1{font-family:var(--serif);font-weight:500;font-size:clamp(44px,7vw,76px);line-height:1.02;letter-spacing:-.02em;margin:0 0 var(--s4)}
+.lede{font-size:clamp(17px,1.6vw,19px);color:var(--text-2);max-width:34em;margin:0 0 var(--s4)}
+.lede strong{color:var(--text);font-weight:500}
+.hero-meta{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);font-family:var(--mono);font-size:13px;color:var(--mute);margin:0 0 var(--s5);padding:0;list-style:none}
+.hero-meta li{display:flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(156,191,138,.15)}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:10px 18px;border-radius:8px;border:1px solid var(--line-2);background:transparent;color:var(--text);font:500 15px/1.2 var(--sans);text-decoration:none;cursor:pointer;transition:border-color .15s,background .15s,color .15s,transform .15s var(--ease)}
+.btn svg{width:17px;height:17px;fill:currentColor;flex:none}
+.btn:hover{border-color:var(--text-2);color:var(--text);background:var(--surface)}
+.btn:active{transform:translateY(1px)}
+.btn.solid{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.solid:hover{background:var(--accent-2);border-color:var(--accent-2);color:var(--on-accent)}
+
+/* handshake figure */
+.trace{border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,var(--bg-2),var(--bg));padding:18px 18px 14px}
+.trace figcaption{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:10px;gap:12px}
+.trace svg{width:100%;height:auto;font-family:var(--mono)}
+.trace .host{font-size:12px;fill:var(--text-2)}
+.trace .ip{font-size:11.5px;fill:var(--mute)}
+.trace .life{stroke:var(--line-2);stroke-width:1;stroke-dasharray:3 4}
+.trace .msg line{stroke:var(--text-2);stroke-width:1.4}
+.trace .msg polygon{fill:var(--text-2)}
+.trace .msg.amb line{stroke:var(--accent)}
+.trace .msg.amb polygon{fill:var(--accent)}
+.trace .msg text{font-size:11.5px;fill:var(--text)}
+.trace .msg.amb text{fill:var(--accent)}
+.trace .t{font-size:11px;fill:var(--mute)}
+.js .trace .msg{opacity:0}
+.js .trace.play .msg{animation:msgIn .35s var(--ease) forwards}
+.js .trace.play .msg line{stroke-dasharray:260;stroke-dashoffset:260;animation:draw .4s var(--ease) forwards;animation-delay:inherit}
+@keyframes msgIn{to{opacity:1}}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* ---------- sections ---------- */
+section.block{padding:clamp(64px,9vw,96px) 0;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:200px minmax(0,1fr);gap:clamp(24px,4vw,64px)}
+.label{position:sticky;top:92px;align-self:start;font-family:var(--mono);font-size:13px;color:var(--mute);line-height:1.5}
+.label b{display:block;color:var(--text);font-weight:500;font-size:13px;margin-bottom:4px}
+.label small{display:block;margin-top:var(--s2);font-size:12px;color:var(--mute);max-width:18ch}
+h2{font-family:var(--serif);font-weight:500;font-size:clamp(32px,4.2vw,46px);line-height:1.1;letter-spacing:-.015em;margin:0 0 var(--s3)}
+h3{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.2vw,25px);line-height:1.25;margin:0}
+.intro{color:var(--text-2);font-size:17px;max-width:66ch;margin:0 0 var(--s5)}
+.prose p{max-width:66ch;margin:0 0 var(--s3);color:var(--text-2);font-size:17px}
+.prose p:first-child{color:var(--text);font-family:var(--serif);font-size:clamp(21px,2.1vw,24px);line-height:1.45;max-width:32em;margin-bottom:var(--s4)}
+@media (max-width:860px){.grid{grid-template-columns:1fr}.label{position:static}.label small{max-width:none}}
+
+.tag{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--text-2);border:1px solid var(--line-2);border-radius:5px;padding:3px 8px;line-height:1.4}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
-.tag{font-family:"JetBrains Mono",monospace;font-size:13px;padding:2px 8px;border-radius:4px;background:color-mix(in srgb,var(--ink) 8%,transparent)}
-.phases{list-style:none;padding:0;margin:16px 0 0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
-.phases li{font-size:13px;padding:8px 6px 6px;border-top:4px solid var(--line);color:var(--mute)}
-.phases li.on{border-color:var(--brick);color:var(--ink);font-weight:600}
-.rlinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(13em,1fr));gap:0;margin-bottom:28px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
-.road div{padding:18px 20px;border-right:1px solid var(--line);position:relative}
-.road div:last-child{border-right:0}
-.road .n{font-size:28px;font-weight:800;letter-spacing:-.02em}
-.road .s{color:var(--mute);font-size:14px}
-.road div.now{background:var(--brick);color:#fff}
-.road div.now .s{color:#ffe3dc}
-.scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
-th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:14px;color:var(--mute);font-weight:600}
-tr:last-child td{border-bottom:0}
-td a{font-weight:600}
-.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(16em,1fr));gap:20px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px}
-.card p{margin:8px 0 0;color:var(--mute)}
-.card .tags{margin-top:14px}
-.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
-.about p{margin:0 0 14px;max-width:62ch}
-.skills{display:grid;gap:18px}
-.skill{display:grid;grid-template-columns:minmax(0,9em) minmax(0,1fr);gap:12px;align-items:center;font-size:15px}
-.bar{height:10px;border-radius:5px;background:color-mix(in srgb,var(--ink) 10%,transparent);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--ink)}
-.contact{background:var(--net);color:var(--netink)}
-.contact h2{color:var(--netink)}
-.contact p{color:#b5ada3;max-width:56ch}
-.contact .btn{border-color:var(--netink);color:var(--netink)}
-.contact .btn.solid{background:var(--netink);color:var(--net)}
-.contact .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-.addr{margin-top:14px;font-family:"JetBrains Mono",monospace;font-size:14px;color:#b5ada3;overflow-wrap:anywhere}
-footer{padding:18px max(5vw,16px);font-size:14px;color:#8f877e;background:var(--net);border-top:1px solid #2c2825}
-.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:6px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none}
-.toast.show{opacity:1}
-@keyframes pkt{from{offset-distance:0%}to{offset-distance:100%}}
-@media(max-width:900px){.report{grid-template-columns:minmax(0,1fr)}.report .meta{border-left:0;border-top:1px solid var(--line)}}
-@media(max-width:760px){.head,.sec-head,.about{grid-template-columns:minmax(0,1fr)}.btns{justify-content:flex-start}.sec-head{gap:10px}}
-@media(max-width:600px){.stack td[data-l=Certification]{display:block}.stack td[data-l=Certification]::before{display:none}table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding:10px 0;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:4px 14px}.stack td::before{content:attr(data-l);color:var(--mute);font-size:13px}.phases{grid-template-columns:repeat(3,minmax(0,1fr))}nav .links{width:100%}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.pk{display:none}}
-</style>
-</head>
-<body>
-<nav aria-label="Sections"><div class="wrap">
-  <a class="me" href="#top">Kian Harrison</a>
-  <div class="links">
-    <a href="#lab">Homelab</a><a href="#reports">Reports</a><a href="#certs">Certifications</a><a href="#training">Training</a><a href="#about">About</a><a href="#contact">Contact</a>
-  </div>
-</div></nav>
+.chip{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;padding:3px 10px;border-radius:99px;border:1px solid var(--line-2);color:var(--text-2);white-space:nowrap}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.done{color:var(--ok);border-color:rgba(156,191,138,.35)}
+.chip.prog{color:var(--accent);border-color:var(--accent-line)}
+.chip.plan{color:var(--mute)}
 
-<header class="band" id="top"><div class="wrap">
-  <div class="head">
-    <div>
-      <h1>Kian Harrison</h1>
-      <p class="lede"><b>Aspiring penetration tester in Melbourne.</b> Networking background, TAFE qualifications in IT, PC hardware and leadership, certificates from Cisco and TryHackMe, and a home lab where I attack, document and report on vulnerable machines the way a client engagement would be run.</p>
-    </div>
-    <div class="btns" id="heroLinks"></div>
-  </div>
+/* about: skills */
+.skills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin-top:var(--s5);background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.sk{background:var(--bg);padding:var(--s4)}
+.sk h3{font-family:var(--mono);font-weight:500;font-size:12.5px;line-height:1.4;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin:0 0 var(--s3)}
+@media (max-width:640px){.skills{grid-template-columns:1fr}}
 
-  <section class="topo" id="lab" aria-labelledby="labTitle">
-    <div class="cap"><span><b id="labTitle">Homelab topology</b> · isolated VirtualBox network, no route to the internet</span><span id="labNote"></span></div>
-    <div class="fig" id="topoFig"><svg id="topo" role="img" aria-label="Diagram of the homelab network: attacker machine, isolated lab network and target machines"></svg></div>
-  </section>
-</div></header>
-
-<section class="band" id="reports" style="padding-top:0"><div class="wrap">
-  <div class="sec-head">
-    <h2>Penetration test reports</h2>
-    <p>Each engagement follows the same phases a consultancy would run, and ends in a client-style report with an executive summary, risk-rated findings and remediation.</p>
-  </div>
-  <div class="reports" id="reportList"></div>
-</div></section>
-
-<section class="band" id="certs" style="padding-top:0"><div class="wrap">
-  <div class="sec-head">
-    <h2>Certifications</h2>
-    <p>Five completed qualifications: IT and hardware foundations from TAFE, leadership training, and security certificates from Cisco and TryHackMe.</p>
-  </div>
-  <div class="road" id="road"></div>
-  <div class="scroll"><table class="stack" id="certTable">
-    <thead><tr><th>Certification</th><th>Issuer</th><th>Status</th><th>Date</th><th>Proof</th></tr></thead>
-    <tbody></tbody>
-  </table></div>
-</div></section>
-
-<section class="band" id="training" style="padding-top:0"><div class="wrap">
-  <div class="sec-head">
-    <h2>Training and practice</h2>
-    <p>What I'm working through now on TryHackMe, building on the Pre Security path I've completed.</p>
-  </div>
-  <div class="grid3" id="trainList"></div>
-</div></section>
-
-<section class="band" id="about" style="padding-top:0"><div class="wrap about">
-  <div>
-    <h2>About me</h2>
-    <p>I came to security from networking, so I tend to start with how traffic moves: what's listening, what talks to what, and where trust is assumed. My goal is an offensive security role, penetration testing first and red teaming later, and I'm also open to entry-level IT roles as a way in.</p>
-    <p>My foundations are hands-on. A Certificate II in Computer Assembly &amp; Repair taught me to build, upgrade and fault-find PCs, and my Certificate IV in Information Technology added client troubleshooting, introductory programming, cyber security risk management, and IT ethics and privacy. Cisco's Introduction to Cyber Security and TryHackMe's Pre Security path then took me into threats, attacks and how networks and the web work underneath.</p>
-    <p>Away from the keyboard I supervise a food and beverage team at Crown Melbourne, backed by a Certificate IV in Leadership &amp; Management. That job taught me to stay calm under pressure, follow strict compliance rules, write clear incident notes and lead a team on long night shifts, all of which carry straight into client work.</p>
-  </div>
-  <div>
-    <h3 style="margin-bottom:16px">Skills</h3>
-    <div class="skills" id="skills"></div>
-  </div>
-</div></section>
-
-<section class="band contact" id="contact"><div class="wrap">
-  <h2>Let's talk</h2>
-  <p>I'm looking for junior penetration testing, security analyst or IT support roles in Melbourne. The fastest way to reach me is below.</p>
-  <div class="row" id="contactLinks"></div>
-  <div class="addr" id="addr"></div>
-</div></section>
-<footer><div class="wrap">© <span id="yr"></span> Kian Harrison · All testing shown was performed on systems I own or on platforms that authorise it.</div></footer>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<script>
-{
-/* ===== EDIT YOUR CONTENT HERE ===== */
-const ME = {
-  email: "work.kianayeee@gmail.com",
-  links: [
-    {id:"linkedin", label:"LinkedIn",     url:"https://www.linkedin.com/in/kianharrison/"},
-    {id:"github",   label:"GitHub",       url:"https://github.com/KianAyeee"},
-    {id:"thm",      label:"TryHackMe",    url:"https://tryhackme.com/p/KianAyeee"},
-    {id:"cv",       label:"Résumé (PDF)", url:""}
-  ]
-};
-
-/* Lab nodes, drawn left to right. status: "live" or "planned" */
-const LAB = [
-  {name:"Kali Linux", role:"Attacker", ip:"192.168.56.101", kind:"attacker", status:"live"},
-  {name:"Metasploitable 2", role:"Linux target", ip:"192.168.56.102", kind:"target", status:"live"},
-  {name:"Windows / AD target", role:"Next to build", ip:"", kind:"target", status:"planned"}
-];
-
-/* phase: 0 Recon, 1 Scanning, 2 Exploitation, 3 Post-exploitation, 4 Reporting */
-const REPORTS = [
-  {title:"Metasploitable 2: vsftpd 2.3.4 backdoor to root (port 21)",
-   status:"done", statusText:"Completed · v1.0", phase:4, date:"13 October 2026",
-   target:"Metasploitable 2, vsftpd 2.3.4", scope:"192.168.56.102 · 21/tcp", type:"Grey box, internal",
-   finding:"CVE-2011-2523 · CVSS 9.8",
-   sev:{Critical:1, High:0, Medium:0, Low:0, Info:1},
-   tools:["Kali Linux","Nmap 7.99","searchsploit","Netcat","Metasploit 6.5"],
-   summary:"A single-day engagement against the FTP service on Metasploitable 2. Nmap identified vsftpd 2.3.4, a build that was tampered with before release. After reading the public exploit to understand the trigger, I fired the backdoor by hand with an FTP login ending in :) and connected to the hidden shell on port 6200 with Netcat, getting an unauthenticated root shell. I then reproduced the result in Metasploit and wrote it up with CVSS scoring, reproduction steps, impact, remediation and retest notes.",
-   pdf:"reports/Metasploitable 2 - Penetration Test Report (Port 21 FTP).pdf", writeup:""},
-  {title:"Metasploitable 2: remaining services (Telnet, SMB, web)",
-   status:"plan", statusText:"Next engagement", phase:-1,
-   target:"Metasploitable 2", scope:"192.168.56.102 · 22 further ports", type:"Grey box, internal",
-   tools:["Nmap","Metasploit"],
-   summary:"The port 21 test catalogued 22 other open ports. Each notable service will be tested and written up as its own finding in the same report format.",
-   pdf:"", writeup:""}
-];
-
-const CERTS = [
-  {name:"Certificate IV in Information Technology", short:"Cert IV IT", learnt:"Identifying and resolving client ICT problems, introductory programming, contributing to cyber security risk management, IT ethics, privacy and IP compliance, and evaluating emerging technologies.",  issuer:"Chisholm Institute of TAFE", status:"done", date:"2018", proof:""},
-  {name:"Certificate II in Computer Assembly & Repair", short:"Cert II Computer Assembly", learnt:"Building, upgrading and repairing desktop computers: hardware components, installation and fault-finding.",  issuer:"Chisholm Institute of TAFE", status:"done", date:"2018", proof:""},
-  {name:"Certificate IV in Leadership & Management", short:"Cert IV Leadership", learnt:"Leading and supporting teams, building workplace relationships, operational planning and workplace health and safety.",  issuer:"William Angliss Institute of TAFE", status:"done", date:"2020", proof:""},
-  {name:"Introduction to Cyber Security", short:"Intro to Cyber Security", learnt:"Common threats, attacks and vulnerabilities, protecting personal data and devices, and how organisations defend against attacks.",  issuer:"Cisco Networking Academy", status:"done", date:"2026", proof:""},
-  {name:"Pre Security Certificate", short:"Pre Security", learnt:"How networks work (OSI and TCP/IP models, DNS, HTTP), how the web works, and Linux and Windows fundamentals.",  issuer:"TryHackMe", status:"done", date:"2026", proof:""}
-];
-
-const TRAINING = [
-  {name:"Cyber Security 101 (SEC1)", where:"TryHackMe", status:"prog", text:"Networking, Linux and Windows fundamentals, web hacking, cryptography and offensive and defensive tooling.", tags:["Nmap","Burp Suite","Metasploit"]},
-  {name:"Homelab engagements", where:"Self-directed", status:"prog", text:"Attacking intentionally vulnerable machines from Kali on an isolated network, then writing each one up as a client-style penetration test report.", tags:["Kali Linux","Metasploitable 2","Reporting"]}
-];
-
-const SKILLS = [
-  ["Networking", ["TCP/IP and OSI models","DNS and HTTP","Network fundamentals"]],
-  ["Systems and hardware", ["PC assembly and repair","Hardware fault-finding","Linux","Windows"]],
-  ["Security", ["Kali Linux","Nmap","searchsploit","Netcat","Metasploit","CVSS v3.1 scoring","Cyber security risk management"]],
-  ["Professional", ["Client ICT troubleshooting","Team leadership","Compliance and ethics","Report writing"]]
-];
-/* ===== END OF CONTENT ===== */
-
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const $ = id => document.getElementById(id);
-const STATUS = {done:"Completed", prog:"In progress", plan:"Planned"};
-const ICON = {
-  linkedin:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5a2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.06c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.1c0-1.22-.02-2.78-1.7-2.78-1.7 0-1.96 1.33-1.96 2.7V21h-4z"/></svg>',
-  github:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>',
-  thm:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 6v6c0 5 3.8 9.3 9 10 5.2-.7 9-5 9-10V6zm0 4.2 5 2.2V12c0 2.9-2 5.5-5 6.2-3-.7-5-3.3-5-6.2V8.4z"/></svg>',
-  cv:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l6 6v14H6zm7 1.5V9h5.5zM8 13h8v1.6H8zm0 3.5h8v1.6H8z"/></svg>'
-};
-
-const linkBtn = (l, solid) => l.url
-  ? `<a class="btn${solid ? " solid" : ""}" href="${esc(l.url)}" target="_blank" rel="noopener">${ICON[l.id] || ""}${esc(l.label)}</a>`
-  : `<span class="btn off" title="Link not added yet">${ICON[l.id] || ""}${esc(l.label)}</span>`;
-
-$("heroLinks").innerHTML = ME.links.map((l, i) => linkBtn(l, i === 0)).join("");
-$("contactLinks").innerHTML = (ME.email ? `<button class="btn solid" id="copyMail" type="button">Copy email address</button>` : "") +
-  ME.links.filter(l => l.id === "linkedin" || l.id === "github" || l.id === "cv").map(l => linkBtn(l, false)).join("");
-$("addr").textContent = ME.email;
-$("yr").textContent = new Date().getFullYear();
-
-const toast = msg => { const t = $("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1800); };
-const cm = $("copyMail");
-if (cm) cm.addEventListener("click", async () => {
-  try { await navigator.clipboard.writeText(ME.email); toast("Email address copied"); }
-  catch (e) { toast("Copy blocked: the address is shown below"); }
-});
+/* labs: topology */
+.topo-card{border:1px solid var(--line);border-radius:14px;background:var(--bg-2);overflow:hidden}
+.topo-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:var(--s3) var(--s4);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12.5px;color:var(--mute)}
+.topo-head .live{color:var(--ok)}
+.topo-body{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+.topo-svg{padding:14px 10px;border-right:1px solid var(--line);min-height:300px}
+.topo-svg svg{width:100%;height:auto}
+.node{cursor:pointer;outline:none}
+.node .box{transition:stroke .15s,fill .15s}
+.node:hover .box,.node:focus-visible .box{stroke:var(--accent)}
+.node.sel .box{stroke:var(--accent);fill:var(--node-sel)}
+.node:focus-visible .ring{stroke:var(--accent);stroke-width:1.5}
+.topo-detail{padding:var(--s4)}
+#topology{min-height:340px}
+@media (max-width:860px){#topology{min-height:0}}
+.topo-detail .k{font-family:var(--mono);font-size:12px;color:var(--mute);margin:0 0 6px}
+.topo-detail h3{margin:6px 0 4px}
+.topo-detail .ipl{font-family:var(--mono);font-size:13px;color:var(--accent);margin:0 0 14px}
+.topo-detail p{color:var(--text-2);font-size:15.5px;margin:0 0 16px}
+.topo-detail ul{list-style:none;margin:0 0 4px;padding:0;font-family:var(--mono);font-size:13px;color:var(--text-2)}
+.topo-detail li{padding:7px 0;border-top:1px dashed var(--line-2)}
+.topo-detail li::before{content:"› ";color:var(--accent)}
+.topo-detail .topo-hint{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:var(--s4)}
+@media (max-width:860px){.topo-body{grid-template-columns:1fr}.topo-svg{border-right:0;border-bottom:1px solid var(--line)}}
+.fallback-list{padding:var(--s4);margin:0;list-style:none;font-family:var(--mono);font-size:14px;color:var(--text-2)}
+.fallback-list li{padding:6px 0}
+.method{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin-top:var(--s5);counter-reset:ph;list-style:none;padding:0}
+.method li{position:relative;padding:var(--s3) var(--s3) 0 0;border-top:1px solid var(--line-2);font-size:14.5px;color:var(--text-2)}
+.method li::before{counter-increment:ph;content:"0" counter(ph);display:block;font-family:var(--mono);font-size:12px;color:var(--accent);margin-bottom:var(--s2)}
+.method li b{display:block;color:var(--text);font-weight:500;font-size:15px;margin-bottom:2px}
+@media (max-width:760px){.method{grid-template-columns:1fr 1fr;row-gap:var(--s4)}.method li:last-child{grid-column:1/-1}}
 
 /* reports */
-const PH = ["Recon", "Scanning", "Exploitation", "Post-exploit", "Reporting"];
-$("reportList").innerHTML = REPORTS.map(r => `
-  <article class="report">
-    <div class="main">
-      <div class="top"><span class="chip ${esc(r.status)}">${esc(r.statusText || STATUS[r.status])}</span></div>
-      <h3>${esc(r.title)}</h3>
-      <p>${esc(r.summary)}</p>
-      <ol class="phases" aria-label="Engagement phases">${PH.map((p, i) => `<li class="${i <= r.phase ? "on" : ""}">${p}</li>`).join("")}</ol>
-      ${r.status === "plan" ? "" : `<div class="rlinks">
-        ${r.pdf ? `<a class="btn solid" href="${esc(r.pdf)}" target="_blank" rel="noopener">${ICON.cv}Read the full report (PDF)</a>` : `<span class="btn off">${ICON.cv}Report PDF coming soon</span>`}
-        ${r.writeup ? `<a class="btn" href="${esc(r.writeup)}" target="_blank" rel="noopener">${ICON.github}Notes on GitHub</a>` : ""}
-      </div>`}
-    </div>
-    <div class="meta">
-      ${r.sev ? `<div class="sev" aria-label="Findings by severity">${Object.entries(r.sev).map(([k, v]) => `<div class="${k === "Critical" && v ? "crit" : ""}"><b>${v}</b><span>${k}</span></div>`).join("")}</div>` : ""}
-      <dl class="kv">${r.finding ? `<dt>Key finding</dt><dd class="mono">${esc(r.finding)}</dd>` : ""}${r.date ? `<dt>Tested</dt><dd>${esc(r.date)}</dd>` : ""}<dt>Target</dt><dd>${esc(r.target)}</dd><dt>Scope</dt><dd class="mono">${esc(r.scope)}</dd><dt>Approach</dt><dd>${esc(r.type)}</dd></dl>
-      <div class="tags">${r.tools.map(t => `<span class="tag">${esc(t)}</span>`).join("")}</div>
-    </div>
-  </article>`).join("");
+.report{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);border:1px solid var(--line);border-radius:14px;background:var(--bg-2);overflow:hidden}
+.report + .report{margin-top:var(--s4)}
+.report .main{padding:var(--s4) var(--s5) var(--s5) var(--s4)}
+.report .meta{padding:var(--s4);border-left:1px solid var(--line);background:var(--bg)}
+.report .head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:var(--s3);font-family:var(--mono);font-size:12.5px;color:var(--mute)}
+.report p{color:var(--text-2);font-size:15.5px;margin:var(--s3) 0 var(--s4)}
+.report.planned{background:transparent;border-style:dashed}
+.report.planned .meta{background:transparent}
+.phases{display:flex;flex-wrap:wrap;gap:0;list-style:none;padding:0;margin:0 0 var(--s4);font-family:var(--mono);font-size:12px}
+.phases li{padding:5px 10px;border:1px solid var(--line-2);color:var(--mute);margin-left:-1px}
+.phases li:first-child{border-radius:6px 0 0 6px;margin-left:0}
+.phases li:last-child{border-radius:0 6px 6px 0}
+.phases li.on{color:var(--accent);border-color:var(--accent-line);background:var(--accent-dim);position:relative;z-index:1}
+.sev{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--line-2);border-radius:8px;overflow:hidden;margin-bottom:var(--s4)}
+.sev div{padding:10px 4px;text-align:center;border-left:1px solid var(--line-2)}
+.sev div:first-child{border-left:0}
+.sev b{display:block;font-family:var(--mono);font-size:19px;font-weight:500;color:var(--text-2)}
+.sev span{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.sev .crit{background:rgba(229,88,74,.1)}
+.sev .crit b{color:var(--crit)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:var(--s2) var(--s3);margin:0 0 var(--s4);font-size:14px}
+.kv dt{color:var(--mute);font-family:var(--mono);font-size:12px;padding-top:2px}
+.kv dd{margin:0;color:var(--text-2)}
+.kv dd.mono{font-size:13px}
+@media (max-width:860px){.report{grid-template-columns:1fr}.report .meta{border-left:0;border-top:1px solid var(--line)}.report .main,.report .meta{padding:var(--s4)}}
 
-/* certifications */
-$("road").innerHTML = CERTS.map(c => {
-  const short = c.short || c.name;
-  const now = c.status === "prog";
-  return `<div class="${now ? "now" : ""}"><div class="n">${esc(short)}</div><div class="s">${esc(c.issuer || "Nationally recognised")} · ${STATUS[c.status]}</div></div>`;
-}).join("");
-$("certTable").tBodies[0].innerHTML = CERTS.map(c => `<tr>
-  <td data-l="Certification"><b style="font-weight:600">${esc(c.name)}</b>${c.learnt ? `<div class="learnt">${esc(c.learnt)}</div>` : ""}</td>
-  <td data-l="Issuer">${esc(c.issuer || "—")}</td>
-  <td data-l="Status"><span class="chip ${esc(c.status)}">${STATUS[c.status]}</span></td>
-  <td data-l="Date" style="white-space:nowrap">${esc(c.date || "—")}</td>
-  <td data-l="Proof">${c.proof ? `<a href="${esc(c.proof)}" target="_blank" rel="noopener">Verify</a>` : "—"}</td>
-</tr>`).join("");
+/* certs */
+.certs{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.cert{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:var(--s4);padding:var(--s4) 0;border-bottom:1px solid var(--line);align-items:start}
+.cert .yr{font-family:var(--mono);font-size:14px;color:var(--mute);padding-top:4px}
+.cert h3{font-size:20px}
+.cert .iss{font-size:13px;color:var(--text-2);margin:var(--s1) 0 var(--s2);font-family:var(--mono)}
+.cert p{margin:0;color:var(--text-2);font-size:15px;max-width:66ch}
+@media (max-width:640px){.cert{grid-template-columns:1fr;gap:var(--s2)}.cert .chip{justify-self:start;order:-1}}
+.sub{font-family:var(--mono);font-weight:500;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin:var(--s6) 0 var(--s3)}
+.training{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s3)}
+.tcard{border:1px solid var(--line);border-radius:12px;padding:var(--s4);background:var(--bg-2)}
+.tcard h4{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.2vw,25px);line-height:1.25;margin:var(--s3) 0 0}
+.tcard .where{font-family:var(--mono);font-size:12.5px;color:var(--mute);margin:var(--s1) 0 var(--s2)}
+.tcard p{color:var(--text-2);font-size:15px;margin:0 0 var(--s3)}
+@media (max-width:640px){.training{grid-template-columns:1fr}}
 
-/* training */
-$("trainList").innerHTML = TRAINING.map(t => `<div class="card">
-  <span class="chip ${esc(t.status)}">${STATUS[t.status]}</span>
-  <h3 style="margin-top:12px">${esc(t.name)}</h3>
-  <div style="color:var(--mute);font-size:14px;margin-top:4px">${esc(t.where)}</div>
-  <p>${esc(t.text)}</p>
-  <div class="tags">${t.tags.map(x => `<span class="tag">${esc(x)}</span>`).join("")}</div>
-</div>`).join("");
+/* contact */
+.contact h2{font-size:clamp(40px,6vw,64px)}
+.mail{display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:clamp(16px,2.2vw,20px);color:var(--text);margin:var(--s2) 0 var(--s5)}
+.mail a{color:var(--text);text-decoration:none;border-bottom:1px solid var(--accent-line)}
+.mail a:hover{color:var(--accent-2);border-bottom-color:var(--accent)}
 
-$("skills").innerHTML = SKILLS.map(([g, items]) => `<div class="sk"><h4>${esc(g)}</h4><div class="tags">${items.map(x => `<span class="tag">${esc(x)}</span>`).join("")}</div></div>`).join("");
+footer{padding:var(--s5) 0 var(--s6);font-size:13.5px;color:var(--mute)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:var(--s3) var(--s5);flex-wrap:wrap}
+footer button{display:inline-flex;align-items:center;gap:6px;min-height:44px;background:none;border:0;padding:0;font:inherit;font-family:var(--mono);color:var(--mute);cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+footer button:hover{color:var(--accent)}
+kbd{font-family:var(--mono);font-size:12px;border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;padding:0 5px;color:var(--text-2)}
 
-/* topology diagram */
-const live = LAB.filter(n => n.status === "live").length;
-$("labNote").textContent = `${live} live host${live === 1 ? "" : "s"} · ${LAB.length - live} planned`;
-const s = $("topo");
-const device = (n, x, y, w, h) => {
-  const planned = n.status === "planned";
-  const accent = n.kind === "attacker" ? "#ec5a3e" : "#ece8e2";
-  const stroke = planned ? "#6b645c" : accent;
-  const dash = planned ? ' stroke-dasharray="6 5"' : "";
-  return `<g>
-    <rect x="${x - w / 2 + 6}" y="${y - h / 2 + 8}" width="${w}" height="${h}" rx="8" fill="#000" opacity=".35"/>
-    <rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="8" fill="${planned ? "#131110" : "#1f1c19"}" stroke="${stroke}" stroke-width="2"${dash}/>
-    <rect x="${x - w / 2 + 10}" y="${y - h / 2 + 10}" width="${w - 20}" height="${h * .48}" rx="3" fill="${planned ? "none" : n.kind === "attacker" ? "#3a1a12" : "#2a2622"}" stroke="${planned ? "#4a443e" : "none"}"${planned ? ' stroke-dasharray="4 4"' : ""}/>
-    ${planned ? "" : `<text x="${x - w / 2 + 18}" y="${y - h / 2 + 10 + h * .3}" fill="${accent}" font-size="13" font-family="JetBrains Mono,monospace">${n.kind === "attacker" ? "$ nmap -sV" : ":21 vsftpd"}</text>`}
-    <text x="${x}" y="${y + h / 2 - 14}" text-anchor="middle" fill="${planned ? "#8f877e" : "#ece8e2"}" font-size="15" font-weight="700">${esc(n.name)}</text>
-    <text x="${x}" y="${y + h / 2 + 22}" text-anchor="middle" fill="${planned ? "#8f877e" : accent}" font-size="14">${esc(n.role)}</text>
-    <text x="${x}" y="${y + h / 2 + 40}" text-anchor="middle" fill="#8f877e" font-size="13" font-family="JetBrains Mono,monospace">${esc(n.ip)}</text>
-  </g>`;
-};
-const draw = () => {
-  const W = s.clientWidth, H = s.clientHeight;
-  if (!W || !H) return;
-  const vertical = W < 560;
-  const n = LAB.length;
-  let out = "";
-  if (!vertical) {
-    const busY = H * .28, devY = H * .58, w = Math.min(190, W / n - 40), h = 104;
-    const xs = LAB.map((_, i) => W * (i + .5) / n);
-    out += `<line x1="${xs[0]}" y1="${busY}" x2="${xs[n - 1]}" y2="${busY}" stroke="#ece8e2" stroke-width="3"/>`;
-    out += `<text x="${(xs[0] + xs[Math.min(1, n - 1)]) / 2}" y="${busY - 14}" text-anchor="middle" fill="#b5ada3" font-size="14">VirtualBox host-only network · 192.168.56.0/24</text>`;
-    LAB.forEach((d, i) => {
-      out += `<line x1="${xs[i]}" y1="${busY}" x2="${xs[i]}" y2="${devY - h / 2}" stroke="${d.status === "planned" ? "#6b645c" : "#ece8e2"}" stroke-width="2"${d.status === "planned" ? ' stroke-dasharray="6 5"' : ""}/>`;
-      out += `<circle cx="${xs[i]}" cy="${busY}" r="5" fill="#131110" stroke="#ece8e2" stroke-width="2"/>`;
-    });
-    const t = LAB.findIndex(d => d.kind === "target" && d.status === "live");
-    if (t > 0) out += `<path id="pp" d="M${xs[0]} ${devY - h / 2} V${busY} H${xs[t]} V${devY - h / 2}" fill="none"/><circle class="pk" r="6" fill="#ec5a3e" style="offset-path:path('M${xs[0]} ${devY - h / 2} V${busY} H${xs[t]} V${devY - h / 2}');animation:pkt 3.2s linear infinite"/>`;
-    LAB.forEach((d, i) => out += device(d, xs[i], devY, w, h));
-  } else {
-    const busX = 34, w = Math.min(220, W - 110), h = 92, step = H / n;
-    const ys = LAB.map((_, i) => step * (i + .5) - 18);
-    out += `<line x1="${busX}" y1="${ys[0]}" x2="${busX}" y2="${ys[n - 1]}" stroke="#ece8e2" stroke-width="3"/>`;
-    LAB.forEach((d, i) => {
-      const cx = busX + 40 + w / 2;
-      out += `<line x1="${busX}" y1="${ys[i]}" x2="${cx - w / 2}" y2="${ys[i]}" stroke="${d.status === "planned" ? "#6b645c" : "#ece8e2"}" stroke-width="2"/><circle cx="${busX}" cy="${ys[i]}" r="5" fill="#131110" stroke="#ece8e2" stroke-width="2"/>`;
-      out += device(d, cx, ys[i], w, h);
-    });
-  }
-  s.innerHTML = out;
-};
-$("topoFig").style.minHeight = (innerWidth < 560 ? LAB.length * 160 : 340) + "px";
-const ro = new ResizeObserver(() => { $("topoFig").style.minHeight = (s.clientWidth < 560 ? LAB.length * 160 : 340) + "px"; draw(); });
-ro.observe(s);
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);opacity:0;background:var(--surface-2);border:1px solid var(--line-2);color:var(--text);padding:10px 16px;border-radius:8px;font-size:14px;transition:opacity .2s,transform .2s var(--ease);pointer-events:none;z-index:60}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* terminal easter egg */
+.term-back{position:fixed;inset:0;background:rgba(8,5,4,.55);z-index:80;display:none}
+.term{position:fixed;z-index:90;left:50%;bottom:clamp(12px,4vh,40px);transform:translateX(-50%);width:min(760px,calc(100vw - 24px));height:min(440px,70vh);display:none;flex-direction:column;background:var(--bg-term);border:1px solid var(--line-2);border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,.55);font-family:var(--mono);font-size:13.5px;overflow:hidden}
+.term.open,.term-back.open{display:flex}
+.term-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 8px 8px 14px;border-bottom:1px solid var(--line);color:var(--mute);font-size:12px}
+.term-bar button{background:none;border:0;color:var(--mute);font:inherit;cursor:pointer;min-width:44px;min-height:44px;border-radius:6px}
+.term-bar button:hover{color:var(--text);background:var(--surface)}
+.term-out{flex:1;overflow-y:auto;padding:14px 16px 6px;color:var(--text-2);white-space:pre-wrap;word-break:break-word;line-height:1.55}
+.term-out .p{color:var(--accent)}
+.term-out .c{color:var(--text)}
+.term-out .h{color:var(--text)}
+.term-out .m{color:var(--mute)}
+.term-out a{color:var(--accent)}
+.term-in{display:flex;align-items:center;gap:8px;padding:8px 16px 14px}
+.term-in label{color:var(--accent);white-space:nowrap}
+.term-in input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--text);font:inherit;caret-color:var(--accent)}
+@media (prefers-reduced-motion:no-preference){.term.open{animation:termIn .22s var(--ease)}}
+@keyframes termIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+
+/* reveal */
+.js .rv{opacity:0;transform:translateY(12px);transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.js .rv.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-delay:0s!important;transition-duration:.001ms!important}
+  .js .rv{opacity:1;transform:none}
+  .js .trace .msg{opacity:1}
+  .js .trace .msg line{stroke-dashoffset:0!important;stroke-dasharray:none!important}
 }
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr}}
+</style>
+<script>document.documentElement.classList.add("js")</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="#hero">~/kian-harrison<span> · security</span></a>
+    <nav aria-label="Sections">
+      <ul class="nav">
+        <li><a href="#about"><i>01</i>About</a></li>
+        <li><a href="#labs"><i>02</i>Labs</a></li>
+        <li><a href="#reports"><i>03</i>Reports</a></li>
+        <li><a href="#certs"><i>04</i>Certs</a></li>
+        <li><a href="#contact"><i>05</i>Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <!-- ===== HERO ===== -->
+  <div class="hero" id="hero">
+    <div class="wrap">
+      <div>
+        <p class="path"><b>kian@lab</b>:~$ whoami</p>
+        <h1>Kian Harrison</h1>
+        <p class="lede"><strong>Aspiring penetration tester in Melbourne.</strong> I came to security from networking, so I start with how traffic moves: what's listening, what talks to what, and where trust is assumed. I attack vulnerable machines in an isolated home lab and write every one up the way a client engagement would be reported.</p>
+        <ul class="hero-meta">
+          <li><span class="dot" aria-hidden="true"></span>Open to junior pentest, security analyst &amp; IT support roles</li>
+          <li>Melbourne, AU</li>
+        </ul>
+        <div class="actions">
+          <a class="btn solid" href="#reports">Read my reports</a>
+          <a class="btn" href="#contact">Get in touch</a>
+        </div>
+      </div>
+
+      <figure class="trace" id="trace" aria-label="Diagram: a TCP three-way handshake from Kali (192.168.56.101) to Metasploitable 2 (192.168.56.102) on port 21, ending with the vsFTPd 2.3.4 banner.">
+        <svg viewBox="0 0 360 250" aria-hidden="true">
+          <text class="host" x="58" y="18" text-anchor="middle">kali</text>
+          <text class="ip" x="58" y="33" text-anchor="middle">.56.101</text>
+          <text class="host" x="302" y="18" text-anchor="middle">msf2</text>
+          <text class="ip" x="302" y="33" text-anchor="middle">.56.102:21</text>
+          <line class="life" x1="58" y1="44" x2="58" y2="240"/>
+          <line class="life" x1="302" y1="44" x2="302" y2="240"/>
+
+          <g class="msg" style="animation-delay:.3s"><line x1="58" y1="72" x2="296" y2="88"/><polygon points="302,88 292,83 293,93"/><text x="180" y="70" text-anchor="middle">SYN</text><text class="t" x="10" y="76">0.000</text></g>
+          <g class="msg" style="animation-delay:.8s"><line x1="302" y1="112" x2="64" y2="128"/><polygon points="58,128 68,123 67,133"/><text x="180" y="110" text-anchor="middle">SYN, ACK</text><text class="t" x="10" y="132">0.001</text></g>
+          <g class="msg" style="animation-delay:1.3s"><line x1="58" y1="152" x2="296" y2="168"/><polygon points="302,168 292,163 293,173"/><text x="180" y="150" text-anchor="middle">ACK</text><text class="t" x="10" y="156">0.001</text></g>
+          <g class="msg amb" style="animation-delay:1.8s"><line x1="302" y1="194" x2="64" y2="210"/><polygon points="58,210 68,205 67,215"/><text x="180" y="192" text-anchor="middle">220 (vsFTPd 2.3.4)</text><text class="t" x="10" y="214">0.004</text></g>
+        </svg>
+        <figcaption><span>tcp/21 · host-only net</span><span>where report 001 began</span></figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <!-- ===== 01 ABOUT ===== -->
+  <section class="block" id="about" aria-labelledby="about-h">
+    <div class="wrap grid">
+      <div class="label"><b>01</b>about me</div>
+      <div>
+        <h2 id="about-h" class="rv">From networks to offence</h2>
+        <div class="prose rv">
+          <p>My goal is an offensive security role: penetration testing first, red teaming later. I'm also open to entry-level IT roles as a way in.</p>
+          <p>My foundations are hands-on. A Certificate II in Computer Assembly &amp; Repair taught me to build, upgrade and fault-find PCs, and my Certificate IV in Information Technology added client troubleshooting, introductory programming, cyber security risk management, and IT ethics and privacy. Cisco's Introduction to Cyber Security and TryHackMe's Pre Security path then took me into threats, attacks and how networks and the web work underneath.</p>
+          <p>Away from the keyboard I supervise a food and beverage team at Crown Melbourne, backed by a Certificate IV in Leadership &amp; Management. That job taught me to stay calm under pressure, follow strict compliance rules, write clear incident notes and lead a team on long night shifts. All of that carries straight into client work.</p>
+        </div>
+
+        <div class="skills rv" aria-label="Skills">
+          <div class="sk"><h3>Networking</h3><div class="tags"><span class="tag">TCP/IP and OSI models</span><span class="tag">DNS and HTTP</span><span class="tag">Network fundamentals</span></div></div>
+          <div class="sk"><h3>Security</h3><div class="tags"><span class="tag">Kali Linux</span><span class="tag">Nmap</span><span class="tag">searchsploit</span><span class="tag">Netcat</span><span class="tag">Metasploit</span><span class="tag">CVSS v3.1 scoring</span><span class="tag">Risk management</span></div></div>
+          <div class="sk"><h3>Systems and hardware</h3><div class="tags"><span class="tag">PC assembly and repair</span><span class="tag">Hardware fault-finding</span><span class="tag">Linux</span><span class="tag">Windows</span></div></div>
+          <div class="sk"><h3>Professional</h3><div class="tags"><span class="tag">Client ICT troubleshooting</span><span class="tag">Team leadership</span><span class="tag">Compliance and ethics</span><span class="tag">Report writing</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 02 LABS ===== -->
+  <section class="block" id="labs" aria-labelledby="labs-h">
+    <div class="wrap grid">
+      <div class="label"><b>02</b>home labs<small>isolated VirtualBox network, no route to the internet</small></div>
+      <div>
+        <h2 id="labs-h" class="rv">The home lab</h2>
+        <p class="intro rv">An isolated host-only network where I attack intentionally vulnerable machines from Kali, then write each one up as a client-style penetration test report. Select a host to see what runs on it.</p>
+
+        <div class="topo-card rv">
+          <div class="topo-head"><span>VirtualBox host-only · 192.168.56.0/24</span><span><span class="live">● 2 live</span> · 1 planned</span></div>
+          <div id="topology">
+            <!-- Fallback shown until React mounts (or if scripts are blocked) -->
+            <ul class="fallback-list">
+              <li>● Kali Linux · Attacker · 192.168.56.101</li>
+              <li>● Metasploitable 2 · Linux target · 192.168.56.102</li>
+              <li>○ Windows / AD target · planned</li>
+              <li>✕ Internet · no route</li>
+            </ul>
+          </div>
+        </div>
+
+        <ol class="method rv" aria-label="How each engagement runs">
+          <li><b>Recon</b>Scope, targets, what's exposed</li>
+          <li><b>Scanning</b>Ports, services, versions</li>
+          <li><b>Exploitation</b>Understand it, then prove it</li>
+          <li><b>Post-exploit</b>Impact and access gained</li>
+          <li><b>Reporting</b>Risk-rated, with remediation</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 03 REPORTS ===== -->
+  <section class="block" id="reports" aria-labelledby="reports-h">
+    <div class="wrap grid">
+      <div class="label"><b>03</b>reports</div>
+      <div>
+        <h2 id="reports-h" class="rv">Penetration test reports</h2>
+        <p class="intro rv">Each engagement follows the same phases a consultancy would run, and ends in a client-style report with an executive summary, risk-rated findings and remediation.</p>
+
+        <article class="report rv">
+          <div class="main">
+            <div class="head"><span class="chip done">Completed · v1.0</span><span>REPORT 001</span></div>
+            <h3>Metasploitable 2: vsftpd 2.3.4 backdoor to root (port 21)</h3>
+            <p>A single-day engagement against the FTP service on Metasploitable 2. Nmap identified vsftpd 2.3.4, a build that was tampered with before release. After reading the public exploit to understand the trigger, I fired the backdoor by hand with an FTP login ending in <code class="mono">:)</code> and connected to the hidden shell on port 6200 with Netcat, getting an unauthenticated root shell. I then reproduced the result in Metasploit and wrote it up with CVSS scoring, reproduction steps, impact, remediation and retest notes.</p>
+            <ol class="phases" aria-label="Engagement phases completed: all five">
+              <li class="on">Recon</li><li class="on">Scanning</li><li class="on">Exploitation</li><li class="on">Post-exploit</li><li class="on">Reporting</li>
+            </ol>
+            <a class="btn solid" href="reports/metasploitable2-port21-ftp-report.pdf" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l6 6v14H6zm7 1.5V9h5.5zM8 13h8v1.6H8zm0 3.5h8v1.6H8z"/></svg>
+              Read the full report (PDF)
+            </a>
+          </div>
+          <div class="meta">
+            <div class="sev" role="img" aria-label="Findings by severity: 1 critical, 0 high, 0 medium, 0 low, 1 informational">
+              <div class="crit"><b>1</b><span>Crit</span></div><div><b>0</b><span>High</span></div><div><b>0</b><span>Med</span></div><div><b>0</b><span>Low</span></div><div><b>1</b><span>Info</span></div>
+            </div>
+            <dl class="kv">
+              <dt>Finding</dt><dd class="mono">CVE-2011-2523 · CVSS 9.8</dd>
+              <dt>Tested</dt><dd>13 October 2026</dd>
+              <dt>Target</dt><dd>Metasploitable 2, vsftpd 2.3.4</dd>
+              <dt>Scope</dt><dd class="mono">192.168.56.102 · 21/tcp</dd>
+              <dt>Approach</dt><dd>Grey box, internal</dd>
+            </dl>
+            <div class="tags"><span class="tag">Kali Linux</span><span class="tag">Nmap 7.99</span><span class="tag">searchsploit</span><span class="tag">Netcat</span><span class="tag">Metasploit 6.5</span></div>
+          </div>
+        </article>
+
+        <article class="report planned rv">
+          <div class="main">
+            <div class="head"><span class="chip plan">Next engagement</span><span>REPORT 002</span></div>
+            <h3>Metasploitable 2: remaining services (Telnet, SMB, web)</h3>
+            <p>The port 21 test catalogued 22 other open ports. Each notable service will be tested and written up as its own finding in the same report format.</p>
+            <ol class="phases" aria-label="Engagement phases: not started">
+              <li>Recon</li><li>Scanning</li><li>Exploitation</li><li>Post-exploit</li><li>Reporting</li>
+            </ol>
+          </div>
+          <div class="meta">
+            <dl class="kv">
+              <dt>Target</dt><dd>Metasploitable 2</dd>
+              <dt>Scope</dt><dd class="mono">192.168.56.102 · 22 further ports</dd>
+              <dt>Approach</dt><dd>Grey box, internal</dd>
+            </dl>
+            <div class="tags"><span class="tag">Nmap</span><span class="tag">Metasploit</span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 04 CERTIFICATIONS ===== -->
+  <section class="block" id="certs" aria-labelledby="certs-h">
+    <div class="wrap grid">
+      <div class="label"><b>04</b>certifications</div>
+      <div>
+        <h2 id="certs-h" class="rv">Certifications</h2>
+        <p class="intro rv">Five completed qualifications: IT and hardware foundations from TAFE, leadership training, and security certificates from Cisco and TryHackMe.</p>
+
+        <ul class="certs rv">
+          <li class="cert"><span class="yr">2026</span><div><h3>Pre Security Certificate</h3><div class="iss">TryHackMe</div><p>How networks work (OSI and TCP/IP models, DNS, HTTP), how the web works, and Linux and Windows fundamentals.</p></div><span class="chip done">Completed</span></li>
+          <li class="cert"><span class="yr">2026</span><div><h3>Introduction to Cyber Security</h3><div class="iss">Cisco Networking Academy</div><p>Common threats, attacks and vulnerabilities, protecting personal data and devices, and how organisations defend against attacks.</p></div><span class="chip done">Completed</span></li>
+          <li class="cert"><span class="yr">2020</span><div><h3>Certificate IV in Leadership &amp; Management</h3><div class="iss">William Angliss Institute of TAFE</div><p>Leading and supporting teams, building workplace relationships, operational planning and workplace health and safety.</p></div><span class="chip done">Completed</span></li>
+          <li class="cert"><span class="yr">2018</span><div><h3>Certificate IV in Information Technology</h3><div class="iss">Chisholm Institute of TAFE</div><p>Identifying and resolving client ICT problems, introductory programming, contributing to cyber security risk management, IT ethics, privacy and IP compliance, and evaluating emerging technologies.</p></div><span class="chip done">Completed</span></li>
+          <li class="cert"><span class="yr">2018</span><div><h3>Certificate II in Computer Assembly &amp; Repair</h3><div class="iss">Chisholm Institute of TAFE</div><p>Building, upgrading and repairing desktop computers: hardware components, installation and fault-finding.</p></div><span class="chip done">Completed</span></li>
+        </ul>
+
+        <h3 class="sub rv">Currently working on</h3>
+        <div class="training rv">
+          <div class="tcard"><span class="chip prog">In progress</span><h4>Cyber Security 101 (SEC1)</h4><div class="where">TryHackMe</div><p>Networking, Linux and Windows fundamentals, web hacking, cryptography, and offensive and defensive tooling.</p><div class="tags"><span class="tag">Nmap</span><span class="tag">Burp Suite</span><span class="tag">Metasploit</span></div></div>
+          <div class="tcard"><span class="chip prog">In progress</span><h4>Homelab engagements</h4><div class="where">Self-directed</div><p>Attacking intentionally vulnerable machines from Kali on an isolated network, then writing each one up as a client-style penetration test report.</p><div class="tags"><span class="tag">Kali Linux</span><span class="tag">Metasploitable 2</span><span class="tag">Reporting</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 05 CONTACT ===== -->
+  <section class="block contact" id="contact" aria-labelledby="contact-h">
+    <div class="wrap grid">
+      <div class="label"><b>05</b>contact</div>
+      <div>
+        <h2 id="contact-h" class="rv">Let's talk.</h2>
+        <p class="intro rv">I'm looking for junior penetration testing, security analyst or IT support roles in Melbourne. The fastest way to reach me is email.</p>
+        <div class="mail rv"><a href="mailto:work.kianayeee@gmail.com">work.kianayeee@gmail.com</a></div>
+        <div class="actions rv">
+          <button class="btn solid" id="copyMail" type="button">Copy email address</button>
+          <a class="btn" href="https://www.linkedin.com/in/kianharrison/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5a2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.06c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.65 4.77 6.1V21h-4v-5.1c0-1.22-.02-2.78-1.7-2.78-1.7 0-1.96 1.33-1.96 2.7V21h-4z"/></svg>LinkedIn</a>
+          <a class="btn" href="https://github.com/KianAyeee" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.74.5 12.02c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-1.97c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.53 11.53 0 0 0 23.5 12.02C23.5 5.74 18.27.5 12 .5z"/></svg>GitHub</a>
+          <a class="btn" href="https://tryhackme.com/p/KianAyeee" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 6v6c0 5 3.8 9.3 9 10 5.2-.7 9-5 9-10V6zm0 4.2 5 2.2V12c0 2.9-2 5.5-5 6.2-3-.7-5-3.3-5-6.2V8.4z"/></svg>TryHackMe</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Kian Harrison · All testing shown was performed on systems I own or on platforms that authorise it.</span>
+    <button type="button" id="termOpen">press <kbd>`</kbd> for a shell</button>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Terminal easter egg -->
+<div class="term-back" id="termBack"></div>
+<div class="term" id="term" role="dialog" aria-modal="true" aria-label="Terminal">
+  <div class="term-bar"><span>kian@lab: ~ (type <span style="color:var(--text)">help</span>)</span><button type="button" id="termClose" aria-label="Close terminal">esc ✕</button></div>
+  <div class="term-out" id="termOut" aria-live="polite"></div>
+  <form class="term-in" id="termForm" autocomplete="off">
+    <label for="termInput">kian@lab:~$</label>
+    <input id="termInput" type="text" spellcheck="false" autocapitalize="off" autocorrect="off">
+  </form>
+</div>
+
+<!-- ===== Vanilla JS: nav, reveal, hero trace, copy email, terminal ===== -->
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  $("yr").textContent = new Date().getFullYear();
+
+  /* header border + active section */
+  const top = $("top");
+  const onScroll = () => top.classList.toggle("scrolled", scrollY > 8);
+  addEventListener("scroll", onScroll, {passive:true}); onScroll();
+  const links = [...document.querySelectorAll(".nav a")];
+  const spy = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) links.forEach(a => a.setAttribute("aria-current", a.hash === "#" + e.target.id ? "true" : "false"));
+  }), {rootMargin:"-45% 0px -50% 0px"});
+  document.querySelectorAll("section.block").forEach(s => spy.observe(s));
+
+  /* reveal on scroll */
+  const rv = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); rv.unobserve(e.target); } }), {rootMargin:"0px 0px -8% 0px"});
+  document.querySelectorAll(".rv").forEach(el => reduce ? el.classList.add("in") : rv.observe(el));
+
+  /* hero handshake plays once */
+  requestAnimationFrame(() => $("trace").classList.add("play"));
+
+  /* toast + copy */
+  const toast = msg => { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove("show"), 1900); };
+  const EMAIL = "work.kianayeee@gmail.com";
+  $("copyMail").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(EMAIL); toast("Email address copied"); }
+    catch { toast("Copy blocked. The address is shown above."); }
+  });
+
+  /* ---------- terminal ---------- */
+  const term = $("term"), back = $("termBack"), out = $("termOut"), input = $("termInput");
+  let lastFocus = null, booted = false, hist = [], hi = 0;
+  const esc = s => s.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  const print = html => { out.insertAdjacentHTML("beforeend", html + "\n"); out.scrollTop = out.scrollHeight; };
+  const go = id => { close(); document.getElementById(id).scrollIntoView({behavior: reduce ? "auto" : "smooth"}); };
+  const CMD = {
+    help: () => `<span class="h">available commands</span>
+  whoami        who runs this lab
+  ls            list files
+  cat &lt;file&gt;    read a file (try: cat about.txt)
+  ifconfig      lab network
+  nmap          scan the lab target
+  certs         completed certifications
+  contact       how to reach me
+  goto &lt;sec&gt;    jump to: about, labs, reports, certs, contact
+  clear / exit`,
+    whoami: () => "kian harrison · aspiring penetration tester · melbourne, au",
+    ls: () => `about.txt  labs/  reports/  certs.txt  contact.txt`,
+    "ls labs": () => `kali-linux/  metasploitable2/  windows-ad/ <span class="m">(planned)</span>`,
+    "ls reports": () => `001-msf2-vsftpd-port21.pdf  002-msf2-remaining-services.draft`,
+    "cat about.txt": () => "Networking background. I start with how traffic moves: what's listening,\nwhat talks to what, and where trust is assumed. Pentesting first,\nred teaming later.",
+    "cat certs.txt": () => CMD.certs(),
+    "cat contact.txt": () => CMD.contact(),
+    ifconfig: () => `vboxnet0: host-only  inet 192.168.56.0/24
+  kali      192.168.56.101   <span class="m">attacker</span>
+  msf2      192.168.56.102   <span class="m">target</span>
+  default route: <span class="p">none</span> <span class="m">(isolated, no internet)</span>`,
+    nmap: () => `Starting Nmap ( https://nmap.org )
+Nmap scan report for 192.168.56.102
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     vsftpd 2.3.4   <span class="p">← see report 001</span>
+<span class="m">… 22 more open ports, saved for report 002</span>`,
+    certs: () => `[done] 2026  Pre Security · TryHackMe
+[done] 2026  Introduction to Cyber Security · Cisco
+[done] 2020  Cert IV Leadership &amp; Management · William Angliss TAFE
+[done] 2018  Cert IV Information Technology · Chisholm TAFE
+[done] 2018  Cert II Computer Assembly &amp; Repair · Chisholm TAFE
+[ .. ]       Cyber Security 101 (SEC1) · TryHackMe`,
+    contact: () => `email     <a href="mailto:${EMAIL}">${EMAIL}</a>
+linkedin  <a href="https://www.linkedin.com/in/kianharrison/" target="_blank" rel="noopener">/in/kianharrison</a>
+github    <a href="https://github.com/KianAyeee" target="_blank" rel="noopener">KianAyeee</a>
+thm       <a href="https://tryhackme.com/p/KianAyeee" target="_blank" rel="noopener">KianAyeee</a>`,
+    sudo: () => "kian is not in the sudoers file. This incident will be reported. (In a client-style PDF, naturally.)",
+    clear: () => { out.innerHTML = ""; return null; },
+    exit: () => { close(); return null; }
+  };
+  CMD["sudo su"] = CMD.sudo;
+  const run = raw => {
+    const cmd = raw.trim().replace(/\s+/g, " ");
+    print(`<span class="p">kian@lab:~$</span> <span class="c">${esc(cmd)}</span>`);
+    if (!cmd) return;
+    hist.push(cmd); hi = hist.length;
+    const lc = cmd.toLowerCase();
+    let r;
+    if (CMD[lc]) r = CMD[lc]();
+    else if (lc.startsWith("nmap")) r = CMD.nmap();
+    else if (lc.startsWith("sudo")) r = CMD.sudo();
+    else if (lc.startsWith("goto ") || lc.startsWith("cd ")) {
+      const t = lc.split(" ")[1].replace(/\/$/, ""), map = {about:"about",labs:"labs",lab:"labs",reports:"reports",certs:"certs",contact:"contact"};
+      if (map[t]) { go(map[t]); return; } r = `no such section: ${esc(t)}`;
+    }
+    else if (lc.startsWith("cat ")) r = `cat: ${esc(cmd.slice(4))}: No such file or directory`;
+    else r = `${esc(cmd.split(" ")[0])}: command not found. Try <span class="c">help</span>`;
+    if (r) print(r);
+  };
+  const open = () => {
+    lastFocus = document.activeElement;
+    term.classList.add("open"); back.classList.add("open");
+    if (!booted) { print(`<span class="m">Last login: from 192.168.56.1 · this shell only knows about this site</span>\nType <span class="c">help</span> to see commands.`); booted = true; }
+    input.focus();
+  };
+  function close(){ term.classList.remove("open"); back.classList.remove("open"); if (lastFocus) lastFocus.focus(); }
+  $("termForm").addEventListener("submit", e => { e.preventDefault(); const v = input.value; input.value = ""; run(v); });
+  input.addEventListener("keydown", e => {
+    if (e.key === "ArrowUp" && hi > 0) { input.value = hist[--hi]; e.preventDefault(); }
+    else if (e.key === "ArrowDown") { hi = Math.min(hist.length, hi + 1); input.value = hist[hi] || ""; e.preventDefault(); }
+    else if (e.key === "Tab") { e.preventDefault(); const m = Object.keys(CMD).filter(k => k.startsWith(input.value.toLowerCase())); if (m.length === 1) input.value = m[0]; }
+  });
+  $("termOpen").addEventListener("click", open);
+  $("termClose").addEventListener("click", close);
+  back.addEventListener("click", close);
+  document.addEventListener("keydown", e => {
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
+    if ((e.key === "`" || e.key === "~") && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); term.classList.contains("open") ? close() : open(); }
+    else if (e.key === "Escape" && term.classList.contains("open")) close();
+    else if (e.key === "Tab" && term.classList.contains("open") && document.activeElement !== input) { e.preventDefault(); input.focus(); }
+  });
+})();
+</script>
+
+<!-- ===== React: interactive lab topology ===== -->
+<script type="module">
+import React, { useState, useEffect } from "https://esm.sh/react@18.3.1";
+import { createRoot } from "https://esm.sh/react-dom@18.3.1/client?deps=react@18.3.1";
+import htm from "https://esm.sh/htm@3.1.1";
+const html = htm.bind(React.createElement);
+
+const NODES = [
+  { id:"kali", name:"Kali Linux", role:"Attacker", ip:"192.168.56.101", status:"live", glyph:"$ nmap -sV",
+    text:"Where every engagement starts. Recon, scanning and exploitation all run from here.",
+    items:["Nmap 7.99","searchsploit","Netcat","Metasploit 6.5"] },
+  { id:"msf2", name:"Metasploitable 2", role:"Linux target", ip:"192.168.56.102", status:"live", glyph:":21 vsftpd",
+    text:"An intentionally vulnerable Linux VM. The first engagement took the vsftpd 2.3.4 backdoor on 21/tcp to an unauthenticated root shell.",
+    items:["21/tcp vsftpd 2.3.4 · CVE-2011-2523","22 further open ports catalogued","Report 001 complete · Report 002 next"] },
+  { id:"win", name:"Windows / AD target", role:"Next to build", ip:"not yet assigned", status:"planned", glyph:"",
+    text:"Next on the build list: a Windows and Active Directory target, so the lab covers the environments most organisations actually run.",
+    items:["Status: planned"] }
+];
+
+const useNarrow = () => {
+  const q = "(max-width: 560px)";
+  const [n, setN] = useState(() => matchMedia(q).matches);
+  useEffect(() => { const m = matchMedia(q); const f = e => setN(e.matches); m.addEventListener("change", f); return () => m.removeEventListener("change", f); }, []);
+  return n;
+};
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* colours come from the CSS tokens in :root, so the palette lives in one place */
+const css = getComputedStyle(document.documentElement);
+const T = k => css.getPropertyValue("--" + k).trim();
+const C = { bg:T("bg"), surface:T("surface"), line2:T("line-2"), text:T("text"), text2:T("text-2"), mute:T("mute"), accent:T("accent"), crit:T("crit"),
+  wire:T("wire"), wireOff:T("wire-off"), stroke:T("node-stroke"), screen:T("screen"), screenAtk:T("screen-atk") };
+const MONO = "IBM Plex Mono, monospace", SANS = "IBM Plex Sans, sans-serif";
+
+function Device({ n, x, y, w, h, selected, onSelect }) {
+  const planned = n.status === "planned", atk = n.id === "kali";
+  const stroke = planned ? C.wireOff : atk ? C.accent : C.stroke;
+  const key = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(n.id); } };
+  return html`<g class=${"node" + (selected ? " sel" : "")} tabIndex="0" role="button"
+      aria-pressed=${selected} aria-label=${`${n.name}, ${n.role}${planned ? "" : ", " + n.ip}`}
+      onClick=${() => onSelect(n.id)} onMouseEnter=${() => onSelect(n.id)} onFocus=${() => onSelect(n.id)} onKeyDown=${key}>
+    <rect class="ring" x=${x - w/2 - 5} y=${y - h/2 - 5} width=${w + 10} height=${h + 10} rx="11" fill="none" stroke="none"/>
+    <rect class="box" x=${x - w/2} y=${y - h/2} width=${w} height=${h} rx="8" fill=${planned ? "transparent" : C.surface} stroke=${stroke} stroke-width="1.5" stroke-dasharray=${planned ? "5 5" : "none"}/>
+    <rect x=${x - w/2 + 10} y=${y - h/2 + 10} width=${w - 20} height="26" rx="3" fill=${planned ? "none" : atk ? C.screenAtk : C.screen} stroke=${planned ? C.line2 : "none"} stroke-dasharray="3 4"/>
+    ${!planned && html`<text x=${x - w/2 + 18} y=${y - h/2 + 28} fill=${atk ? C.accent : C.text2} font-size="13" font-family=${MONO}>${n.glyph}</text>`}
+    <text x=${x} y=${y + h/2 - 30} text-anchor="middle" fill=${planned ? C.mute : C.text} font-size="16" font-weight="500" font-family=${SANS}>${n.name}</text>
+    <text x=${x} y=${y + h/2 - 12} text-anchor="middle" fill=${planned ? C.mute : atk ? C.accent : C.text2} font-size="13" font-family=${MONO}>${planned ? n.role : n.ip.replace("192.168", "…")}</text>
+  </g>`;
+}
+
+function Topology() {
+  const [sel, setSel] = useState("kali");
+  const narrow = useNarrow();
+  const node = NODES.find(n => n.id === sel);
+  const W = narrow ? 340 : 580, H = narrow ? 520 : 320;
+  const dw = narrow ? 190 : 164, dh = 100;
+  let pos, bus, inet;
+  if (!narrow) {
+    const busY = 118, devY = 245, xs = [96, 290, 484];
+    pos = xs.map(x => [x, devY]);
+    bus = html`<g>
+      <line x1=${xs[0]} y1=${busY} x2=${xs[2]} y2=${busY} stroke=${C.wire} stroke-width="2"/>
+      <text x=${(xs[0]+xs[1])/2} y=${busY - 12} text-anchor="middle" fill=${C.mute} font-size="13" font-family=${MONO}>vboxnet0 · 192.168.56.0/24</text>
+      ${xs.map((x,i) => html`<g key=${i}><line x1=${x} y1=${busY} x2=${x} y2=${devY - dh/2} stroke=${NODES[i].status === "planned" ? C.wireOff : C.wire} stroke-width="1.5" stroke-dasharray=${NODES[i].status === "planned" ? "5 5" : "none"}/><circle cx=${x} cy=${busY} r="4" fill=${C.bg} stroke=${C.stroke} stroke-width="1.5"/></g>`)}
+    </g>`;
+    inet = html`<g aria-hidden="true">
+      <rect x=${xs[2] - 62} y="18" width="124" height="34" rx="17" fill="none" stroke=${C.wireOff} stroke-dasharray="4 4"/>
+      <text x=${xs[2]} y="40" text-anchor="middle" fill=${C.mute} font-size="13" font-family=${MONO}>internet</text>
+      <line x1=${xs[2]} y1="52" x2=${xs[2]} y2=${busY} stroke=${C.wireOff} stroke-dasharray="3 5"/>
+      <g transform=${`translate(${xs[2]},${(52 + busY)/2})`}><circle r="10" fill=${C.bg} stroke=${C.crit} stroke-width="1.5"/><path d="M-4 -4 L4 4 M4 -4 L-4 4" stroke=${C.crit} stroke-width="1.6"/></g>
+      <text x=${xs[2] - 18} y=${(52 + busY)/2 + 4} text-anchor="end" fill=${C.crit} font-size="12" font-family=${MONO}>no route</text>
+    </g>`;
+    var pkt = `M${xs[0]} ${devY - dh/2} V${busY} H${xs[1]} V${devY - dh/2}`;
+  } else {
+    const busX = 26, ys = [110, 270, 430], cx = busX + 40 + dw/2;
+    pos = ys.map(y => [cx, y]);
+    bus = html`<g>
+      <line x1=${busX} y1=${ys[0]} x2=${busX} y2=${ys[2]} stroke=${C.wire} stroke-width="2"/>
+      ${ys.map((y,i) => html`<g key=${i}><line x1=${busX} y1=${y} x2=${cx - dw/2} y2=${y} stroke=${NODES[i].status === "planned" ? C.wireOff : C.wire} stroke-width="1.5" stroke-dasharray=${NODES[i].status === "planned" ? "5 5" : "none"}/><circle cx=${busX} cy=${y} r="4" fill=${C.bg} stroke=${C.stroke} stroke-width="1.5"/></g>`)}
+    </g>`;
+    inet = html`<g aria-hidden="true"><text x="12" y="28" fill=${C.mute} font-size="13" font-family=${MONO}>vboxnet0 · 192.168.56.0/24</text><text x="12" y="48" fill=${C.crit} font-size="12" font-family=${MONO}>✕ no route to internet</text></g>`;
+    var pkt = `M${cx - dw/2} ${ys[0]} H${busX} V${ys[1]} H${cx - dw/2}`;
+  }
+  return html`<div class="topo-body">
+    <div class="topo-svg">
+      <svg viewBox=${`0 0 ${W} ${H}`} role="group" aria-label="Home lab network topology. Use Tab to move between hosts.">
+        ${inet}${bus}
+        ${!reduce && html`<circle r="4.5" fill=${C.accent}><animateMotion dur="3.6s" repeatCount="3" fill="freeze" path=${pkt} keyPoints="0;1" keyTimes="0;1" calcMode="linear"/></circle>`}
+        ${NODES.map((n, i) => html`<${Device} key=${n.id} n=${n} x=${pos[i][0]} y=${pos[i][1]} w=${dw} h=${dh} selected=${sel === n.id} onSelect=${setSel}/>`)}
+      </svg>
+    </div>
+    <div class="topo-detail" aria-live="polite">
+      <p class="k">${node.status === "planned" ? "○ planned" : "● live"} · ${node.role.toLowerCase()}</p>
+      <h3>${node.name}</h3>
+      <p class="ipl">${node.ip}</p>
+      <p>${node.text}</p>
+      <ul>${node.items.map(i => html`<li key=${i}>${i}</li>`)}</ul>
+      <p class="topo-hint">hover, tap or tab through the hosts</p>
+    </div>
+  </div>`;
+}
+
+createRoot(document.getElementById("topology")).render(html`<${Topology}/>`);
 </script>
 </body>
+</html>
